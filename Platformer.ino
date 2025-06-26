@@ -1,6 +1,8 @@
 #include <Arduboy2.h>
 #include "math.h"
 
+const int FRAME_RATE = 60;
+
 Arduboy2 arduboy;
 
 // http://www.bloggingadeadhorse.com/TeamARGImgConverter/
@@ -49,6 +51,7 @@ struct Player {
 		velocity.x = 0;
 		velocity.y += gravity;
 
+		// Movement input
 		if (arduboy.justPressed(A_BUTTON) && grounded) {
 			velocity.y -= jumpVelocity;
 			grounded = false;
@@ -69,6 +72,7 @@ struct Player {
 		//sprintf(strBuf, "y: %d vy: %d g: %d", (int)position.y, (int)velocity.y, grounded ? 1 : 0);
 		//Serial.println(strBuf);
 
+		// Apply veritcal movement
 		if (!GetCollisionAtMapPosition(position.x + velocity.x, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))) {
 			position.y += velocity.y;
 		} else {
@@ -76,6 +80,7 @@ struct Player {
 			grounded = true;
 		}
 		
+		// Apply horizontal movement
 		if (!GetCollisionAtMapPosition(position.x + velocity.x + (4 * face), position.y)
 		 && !GetCollisionAtMapPosition(position.x + velocity.x + (4 * face), position.y - 8)
 		 && !GetCollisionAtMapPosition(position.x + velocity.x + (4 * face), position.y - 12)) 
@@ -95,7 +100,7 @@ void setup() {
 	arduboy.begin();
 	arduboy.clear();
 
-	arduboy.setFrameRate(60);
+	arduboy.setFrameRate(FRAME_RATE);
 }
 
 void loop() {
