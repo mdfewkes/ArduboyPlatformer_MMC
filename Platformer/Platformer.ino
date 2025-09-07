@@ -2,6 +2,9 @@
 #include "math.h"
 
 const int FRAME_RATE = 60;
+const uint8_t JUMP_BUTTON = B_BUTTON;
+const uint8_t SHOT_BUTTON = A_BUTTON;
+const int MAX_SHOTS = 4;
 
 Arduboy2 arduboy;
 
@@ -38,6 +41,29 @@ bool GetCollisionAtMapPosition(float x, float y) {
 	return worldmap[tileY][tileX] > 0;
 }
 
+struct Shot {
+	Vector position;
+	float xVelocity;
+	bool active = false;
+
+	void Update() {
+		if (active) {
+			position.x += xVelocity;
+
+			if (GetCollisionAtMapPosition(position.x, position.y)) {
+				active = false;
+			}
+		}
+	}
+
+	void Draw() {
+		if (active) {
+			arduboy.fillCircle(position.x, position.y, 3);
+		}
+	}
+};
+Shot shots[MAX_SHOTS];
+
 struct Player {
 	Vector position {x: 64, y: 32};
 	Vector velocity;
@@ -52,11 +78,11 @@ struct Player {
 		velocity.y += gravity;
 
 		// Movement input
-		if (arduboy.justPressed(A_BUTTON) && grounded) {
+		if (arduboy.justPressed(JUMP_BUTTON) && grounded) {
 			velocity.y -= jumpVelocity;
 			grounded = false;
 		}
-		if (arduboy.justReleased(A_BUTTON) && velocity.y < 0) {
+		if (arduboy.justReleased(JUMP_BUTTON) && velocity.y < 0) {
 			velocity.y = gravity;
 		}
 		if (arduboy.pressed(LEFT_BUTTON)) {
@@ -87,14 +113,24 @@ struct Player {
 		{
 			position.x += velocity.x;
 		}
+
+		// Shoot		
+		if (arduboy.justPressed(SHOT_BUTTON)) {
+			for (int i = 0; i < MAX_SHOTS; i++) {
+				if (!shots[i].active) {
+					shots[i].position = {x: position.x + (4 * face), y: position.y - 6};
+					shots[i].xVelocity = 4 * face;
+					shots[i].active = true;
+					break;
+				}
+			}
+		}
 	}
 
 	void Draw() {
 		arduboy.fillRect(position.x - 6, position.y - 12, 12, 12, WHITE);
 	}
 } player;
-
-
 
 void setup() {
 	arduboy.begin();
@@ -121,6 +157,9 @@ void loop() {
 		
 		case GameState::Gameplay:
 			player.Update();
+			for (int i = 0; i < MAX_SHOTS; i++) {
+				shots[i].Update();
+			}
 
 			for (int y = 0; y < 8; ++y) {
 				for (int x = 0; x < 16; ++x) {
@@ -132,6 +171,9 @@ void loop() {
 				}
 			}
 			player.Draw();
+			for (int i = 0; i < MAX_SHOTS; i++) {
+				shots[i].Draw();
+			}
 
 			break;
 	}
