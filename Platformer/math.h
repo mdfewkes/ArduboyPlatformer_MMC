@@ -1,3 +1,5 @@
+#pragma once
+
 struct Vector {float x, y;};
 
 Vector addVectors(Vector a, Vector b) {
