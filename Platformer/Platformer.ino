@@ -15,6 +15,9 @@ void setup() {
 void loop() {
 	if (!arduboy.nextFrame()) return;
 
+	deltaTime = (millis() - now) / 1000.0;
+	now = millis();
+
 	arduboy.clear();
 	arduboy.pollButtons();
 
