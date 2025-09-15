@@ -6,7 +6,7 @@
 #include "map.h"
 
 const uint8_t PROGMEM PlayerImg[] = {
-12, 12,
+// 12, 12,
 0x00, 0x60, 0xd0, 0xdc, 0x22, 0x2a, 0xaa, 0x5c, 0x50, 0x70, 0x70, 0x20, 
 0x00, 0x0c, 0x0e, 0x0d, 0x07, 0x03, 0x0d, 0x0e, 0x0c, 0x00, 0x00, 0x00, 
 };
@@ -30,7 +30,7 @@ struct Shot {
 
 	void Draw() {
 		if (active) {
-			arduboy.fillCircle(position.x, position.y, 1);
+			arduboy.drawCircle(position.x, position.y, 1);
 		}
 	}
 };
@@ -98,6 +98,7 @@ struct Player {
 	}
 
 	void Draw() {
-		Sprites::drawSelfMasked(position.x - 6, position.y - 12, PlayerImg, 0);
+		// Sprites::drawSelfMasked(position.x - 6, position.y - 12, PlayerImg, 0);
+		ardbitmap.drawBitmap(position.x, position.y, PlayerImg, 12, 12, WHITE, ALIGN_V_BOTTOM | ALIGN_H_CENTER, face > 0 ? MIRROR_NONE : MIRROR_HORIZONTAL);
 	}
 } player;
