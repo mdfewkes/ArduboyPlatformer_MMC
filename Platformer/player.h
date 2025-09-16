@@ -12,7 +12,7 @@ const uint8_t PROGMEM PlayerImg[] = {
 };
 
 const int MAX_SHOTS = 4;
-const int SHOT_SPEED = 3 * 60;
+const int SHOT_SPEED = 1.5 * 60;
 struct Shot {
 	Vector position;
 	float xVelocity;
@@ -39,7 +39,7 @@ Shot shots[MAX_SHOTS];
 struct Player {
 	Vector position {x: 64, y: 32};
 	Vector velocity;
-	float speed = 1 * 60;
+	float speed = 0.75 * 60;
 	float jumpVelocity = 1.7551f;
 	float gravity = 0.09f;
 	int8_t face = 1; // -1: left, 1: right
@@ -75,8 +75,8 @@ struct Player {
 		}
 
 		// Apply veritcal movement
-		if (!GetCollisionAtMapPosition(position.x + 0, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
-		//  && !GetCollisionAtMapPosition(position.x - 4, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
+		if (!GetCollisionAtMapPosition(position.x + 4, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
+		 && !GetCollisionAtMapPosition(position.x - 4, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
 		 ) {
 			position.y += velocity.y;
 		} else {
@@ -88,7 +88,7 @@ struct Player {
 		if (arduboy.justPressed(SHOT_BUTTON)) {
 			for (int i = 0; i < MAX_SHOTS; i++) {
 				if (!shots[i].active) {
-					shots[i].position = {x: position.x + (4 * face), y: position.y - 6};
+					shots[i].position = {x: position.x + (4 * face), y: position.y - 7};
 					shots[i].xVelocity = SHOT_SPEED * face;
 					shots[i].active = true;
 					break;
