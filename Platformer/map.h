@@ -2,30 +2,61 @@
 
 #include "math.h"
 
-int worldmap[8][16] = {
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-  { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 },
-  { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-  { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-  { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
-  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
-  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+const int TILE_SIZE = 8;
+const int SCREEN_WIDTH = 16;
+const int SCREEN_HEIGHT = 8;
+const int SCREENS_WIDE = 3;
+const int MAP_WIDTH = SCREEN_WIDTH * SCREENS_WIDE;
+const int MAP_HEIGHT = SCREEN_HEIGHT;
+
+float cameraLeft = 0;
+
+bool worldmap[MAP_HEIGHT][MAP_WIDTH] = {
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+  { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 },
+  { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+  { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+  { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+  { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } 
 };
 
-bool GetCollisionAtMapPosition(Vector position) {
-	int tileX = position.x / 8;
-	int tileY = position.y / 8;
-	
-	if (tileX < 0 || tileX >= 16) return true;
-	if (tileY < 0 || tileY >= 8) return true;
+void DrawMap() {
+	int cameraTile = cameraLeft / TILE_SIZE;
+	for (int y = 0; y < 8; ++y) {
+		for (int x = cameraTile; x < cameraTile + SCREEN_WIDTH + 1; ++x) {
+			if (worldmap[y][x] > 0) {
+				arduboy.fillRect(x * TILE_SIZE - cameraLeft, y * TILE_SIZE, 7, 7, WHITE);
+			} else {
+				// arduboy.fillRect(x * TILE_SIZE - cameraLeft, y * TILE_SIZE, 1, 1, WHITE);
+			}
+		}
+	}
+}
 
-	return worldmap[tileY][tileX] > 0;
+void ShiftMapLeft() {
+	for (int y = 0; y < SCREEN_HEIGHT; ++y) {
+		for (int x = 0; x < SCREEN_WIDTH; ++x) {
+			for (int s = 0; s < SCREENS_WIDE-1; ++s) {
+				worldmap[y][x + s * SCREEN_WIDTH] = worldmap[y][x + s * (SCREEN_WIDTH + 1)];
+			}
+		}
+	}
 }
 
 bool GetCollisionAtMapPosition(float x, float y) {
-	int tileX = x / 8;
-	int tileY = y / 8;
+	int tileX = x / TILE_SIZE;
+	int tileY = y / TILE_SIZE;
+	
+	if (tileX < 0 || tileX >= MAP_WIDTH) return true;
+	if (tileY < 0 || tileY >= MAP_HEIGHT) return true;
 
 	return worldmap[tileY][tileX] > 0;
 }
+
+bool GetCollisionAtMapPosition(Vector position) {
+	return GetCollisionAtMapPosition(position.x, position.y);
+}
+
+

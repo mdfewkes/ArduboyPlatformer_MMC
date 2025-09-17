@@ -11,7 +11,7 @@ const uint8_t PROGMEM PlayerImg[] = {
 0x00, 0x0c, 0x0e, 0x0d, 0x07, 0x03, 0x0d, 0x0e, 0x0c, 0x00, 0x00, 0x00, 
 };
 
-const int MAX_SHOTS = 4;
+const int MAX_SHOTS = 6;
 const int SHOT_SPEED = 1.5 * 60;
 struct Shot {
 	Vector position;
@@ -25,12 +25,15 @@ struct Shot {
 			if (GetCollisionAtMapPosition(position.x, position.y)) {
 				active = false;
 			}
+			if (position.x < cameraLeft || position.x > cameraLeft + WIDTH) {
+				active = false;
+			}
 		}
 	}
 
 	void Draw() {
 		if (active) {
-			arduboy.drawCircle(position.x, position.y, 1);
+			arduboy.drawCircle(position.x - cameraLeft, position.y, 1);
 		}
 	}
 };
@@ -75,8 +78,8 @@ struct Player {
 		}
 
 		// Apply veritcal movement
-		if (!GetCollisionAtMapPosition(position.x + 4, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
-		 && !GetCollisionAtMapPosition(position.x - 4, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
+		if (!GetCollisionAtMapPosition(position.x + 3, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
+		 && !GetCollisionAtMapPosition(position.x - 3, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
 		 ) {
 			position.y += velocity.y;
 		} else {
@@ -99,6 +102,6 @@ struct Player {
 
 	void Draw() {
 		// Sprites::drawSelfMasked(position.x - 6, position.y - 12, PlayerImg, 0);
-		ardbitmap.drawBitmap(position.x, position.y, PlayerImg, 12, 12, WHITE, ALIGN_V_BOTTOM | ALIGN_H_CENTER, face > 0 ? MIRROR_NONE : MIRROR_HORIZONTAL);
+		ardbitmap.drawBitmap(position.x - cameraLeft, position.y, PlayerImg, 12, 12, WHITE, ALIGN_V_BOTTOM | ALIGN_H_CENTER, face > 0 ? MIRROR_NONE : MIRROR_HORIZONTAL);
 	}
 } player;

@@ -37,15 +37,10 @@ void loop() {
 				shots[i].Update();
 			}
 
-			for (int y = 0; y < 8; ++y) {
-				for (int x = 0; x < 16; ++x) {
-					if (worldmap[y][x] > 0) {
-						arduboy.fillRect(x * 8, y * 8, 7, 7, WHITE);
-					} else {
-						arduboy.fillRect(x * 8, y * 8, 1, 1, WHITE);
-					}
-				}
-			}
+			cameraLeft = player.position.x - WIDTH/2;
+			if (cameraLeft < 0) cameraLeft = 0;
+			if (cameraLeft > SCREEN_WIDTH * (SCREENS_WIDE - 1) * TILE_SIZE) cameraLeft = SCREEN_WIDTH * (SCREENS_WIDE - 1) * TILE_SIZE;
+			DrawMap();
 			player.Draw();
 			for (int i = 0; i < MAX_SHOTS; i++) {
 				shots[i].Draw();
