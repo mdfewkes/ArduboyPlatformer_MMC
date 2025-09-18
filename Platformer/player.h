@@ -72,15 +72,14 @@ struct Player {
 		// Apply horizontal movement
 		if (!GetCollisionAtMapPosition(position.x + velocity.x + (4 * face), position.y)
 		 && !GetCollisionAtMapPosition(position.x + velocity.x + (4 * face), position.y - 8)
-		 && !GetCollisionAtMapPosition(position.x + velocity.x + (4 * face), position.y - 12)) 
-		{
+		) {
 			position.x += velocity.x;
 		}
 
 		// Apply veritcal movement
 		if (!GetCollisionAtMapPosition(position.x + 3, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
 		 && !GetCollisionAtMapPosition(position.x - 3, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
-		 ) {
+		) {
 			position.y += velocity.y;
 		} else {
 			velocity.y = 0;

@@ -11,7 +11,7 @@ const int MAP_HEIGHT = SCREEN_HEIGHT;
 
 float cameraLeft = 0;
 
-bool worldmap[MAP_HEIGHT][MAP_WIDTH] = {
+int8_t worldmap[MAP_HEIGHT][MAP_WIDTH] = {
   { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
   { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 },
   { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
@@ -39,8 +39,20 @@ void ShiftMapLeft() {
 	for (int y = 0; y < SCREEN_HEIGHT; ++y) {
 		for (int x = 0; x < SCREEN_WIDTH; ++x) {
 			for (int s = 0; s < SCREENS_WIDE-1; ++s) {
-				worldmap[y][x + s * SCREEN_WIDTH] = worldmap[y][x + s * (SCREEN_WIDTH + 1)];
+				worldmap[y][x + s * SCREEN_WIDTH] = worldmap[y][x + (s + 1) * SCREEN_WIDTH];
 			}
+			worldmap[y][x + SCREEN_WIDTH * (SCREENS_WIDE-1)] = 0;
+		}
+	}
+}
+
+void ShiftMapRight() {
+	for (int y = 0; y < SCREEN_HEIGHT; ++y) {
+		for (int x = 0; x < SCREEN_WIDTH; ++x) {
+			for (int s = SCREENS_WIDE-1; s > 0; --s) {
+				worldmap[y][x + s * SCREEN_WIDTH] = worldmap[y][x + (s - 1) * SCREEN_WIDTH];
+			}
+			worldmap[y][x] = 0;
 		}
 	}
 }
