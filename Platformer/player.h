@@ -11,7 +11,7 @@ const uint8_t PROGMEM PlayerImg[] = {
 0x00, 0x0c, 0x0e, 0x0d, 0x07, 0x03, 0x0d, 0x0e, 0x0c, 0x00, 0x00, 0x00, 
 };
 
-const int MAX_SHOTS = 6;
+const int MAX_SHOTS = 8;
 const int SHOT_SPEED = 1.5 * 60;
 struct Shot {
 	Vector position;
@@ -82,8 +82,8 @@ struct Player {
 		) {
 			position.y += velocity.y;
 		} else {
+			grounded = velocity.y > 0 ? true : false;
 			velocity.y = 0;
-			grounded = true;
 		}
 
 		// Shoot		
@@ -100,7 +100,8 @@ struct Player {
 	}
 
 	void Draw() {
-		// Sprites::drawSelfMasked(position.x - 6, position.y - 12, PlayerImg, 0);
 		ardbitmap.drawBitmap(position.x - cameraLeft, position.y, PlayerImg, 12, 12, WHITE, ALIGN_V_BOTTOM | ALIGN_H_CENTER, face > 0 ? MIRROR_NONE : MIRROR_HORIZONTAL);
 	}
 } player;
+
+

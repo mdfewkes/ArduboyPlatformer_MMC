@@ -56,3 +56,4 @@ function jumpHeight(impulse, gravity) {
 	return {height: height, counter: counter};
 }
 */
+
