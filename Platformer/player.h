@@ -11,7 +11,7 @@ const uint8_t PROGMEM PlayerImg[] = {
 0x00, 0x0c, 0x0e, 0x0d, 0x07, 0x03, 0x0d, 0x0e, 0x0c, 0x00, 0x00, 0x00, 
 };
 
-const int MAX_SHOTS = 8;
+const int MAX_SHOTS = 3;
 const int SHOT_SPEED = 1.5 * 60;
 struct Shot {
 	Vector position;
@@ -22,9 +22,9 @@ struct Shot {
 		if (active) {
 			position.x += xVelocity * deltaTime;
 
-			if (GetCollisionAtMapPosition(position.x, position.y)) {
-				active = false;
-			}
+			// if (GetCollisionAtMapPosition(position.x, position.y)) {
+			// 	active = false;
+			// }
 			if (position.x < cameraLeft || position.x > cameraLeft + WIDTH) {
 				active = false;
 			}
