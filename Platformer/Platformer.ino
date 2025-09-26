@@ -28,6 +28,10 @@ void loop() {
 
 			if (arduboy.justPressed(A_BUTTON)) {
 				gameState = GameState::Gameplay;
+
+				LoadRoom(level[0], 0);
+				LoadRoom(level[1], 1);
+				LoadRoom(level[2], 2);
 			}
 			break;
 		
