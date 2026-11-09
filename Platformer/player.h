@@ -40,17 +40,19 @@ struct Shot {
 Shot shots[MAX_SHOTS];
 
 struct Player {
+	const float speed = 0.75f * 60;
+	const float jumpVelocity = 1.7551f * 60;
+	const float gravity = 0.09f * 60 * 60;
+	const float jumpCutFallSpeed = 0.09f * 60.0f;
+
 	Vector position {x: 64, y: 32};
 	Vector velocity;
-	float speed = 0.75 * 60;
-	float jumpVelocity = 1.7551f;
-	float gravity = 0.09f;
 	int8_t face = 1; // -1: left, 1: right
 	bool grounded = false;
 
 	void Update() {
 		velocity.x = 0;
-		velocity.y += gravity;
+		velocity.y += gravity * deltaTime;
 
 		// Movement input
 		if (arduboy.justPressed(JUMP_BUTTON) && grounded) {
@@ -58,29 +60,32 @@ struct Player {
 			grounded = false;
 		}
 		if (arduboy.justReleased(JUMP_BUTTON) && velocity.y < 0) {
-			velocity.y = gravity;
+			velocity.y = jumpCutFallSpeed;
 		}
 		if (arduboy.pressed(LEFT_BUTTON)) {
-			velocity.x -= speed * deltaTime;
+			velocity.x -= speed;
 			face = -1;
 		}
 		if (arduboy.pressed(RIGHT_BUTTON)) {
-			velocity.x += speed * deltaTime;
+			velocity.x += speed;
 			face = 1;
 		}
+
+		const float dx = velocity.x * deltaTime;
+		const float dy = velocity.y * deltaTime;
 		
 		// Apply horizontal movement
-		if (!GetCollisionAtMapPosition(position.x + velocity.x + (4 * face), position.y)
-		 && !GetCollisionAtMapPosition(position.x + velocity.x + (4 * face), position.y - 8)
+		if (!GetCollisionAtMapPosition(position.x + dx + (4 * face), position.y)
+		 && !GetCollisionAtMapPosition(position.x + dx + (4 * face), position.y - 8)
 		) {
-			position.x += velocity.x;
+			position.x += dx;
 		}
 
 		// Apply veritcal movement
-		if (!GetCollisionAtMapPosition(position.x + 3, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
-		 && !GetCollisionAtMapPosition(position.x - 3, position.y + velocity.y + (velocity.y < 0 ? -8 : 0))
+		if (!GetCollisionAtMapPosition(position.x + 3, position.y + dy + (velocity.y < 0 ? -8 : 0))
+		 && !GetCollisionAtMapPosition(position.x - 3, position.y + dy + (velocity.y < 0 ? -8 : 0))
 		) {
-			position.y += velocity.y;
+			position.y += dy;
 		} else {
 			grounded = velocity.y > 0 ? true : false;
 			velocity.y = 0;
